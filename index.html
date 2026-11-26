@@ -4,274 +4,221 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TIMESHOT</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--pink:#ff2bd6;--green:#00e04f}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{background:#fff;color:#000;font:16px/1.4 Inter,Arial,sans-serif;overflow:hidden}
-button,input{font:inherit}
-[hidden]{display:none!important}
-:focus-visible{outline:3px solid #000;outline-offset:3px}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: #fff; color: #000; font: 16px/1.4 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; overflow: hidden; }
+button, input { font: inherit; }
 
-h1{position:fixed;top:24px;left:28px;margin:0;z-index:2;font:800 clamp(28px,5vw,56px)/1 Unbounded,'Arial Black',sans-serif;letter-spacing:-.03em;pointer-events:none}
-.clock{position:fixed;inset:0;display:grid;place-items:center;padding-bottom:60px}
-.clock svg{width:min(96vw,calc(100svh - 200px),760px);height:auto;overflow:visible}
+h1 { position: fixed; top: 24px; left: 28px; z-index: 2; margin: 0; font-size: clamp(28px, 5vw, 48px); line-height: 1; letter-spacing: -.02em; pointer-events: none; }
 
-#layer{position:fixed;inset:0;z-index:1;pointer-events:none}
-.orb{position:absolute;width:var(--d);height:var(--d);border-radius:50%;border:0;padding:0;background:var(--c);cursor:pointer;pointer-events:auto}
-.orb.big:has(img){background:none}
-.orb img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover}
+#clock { position: fixed; inset: 0; margin: auto; width: min(96vw, calc(100svh - 200px), 760px); height: min(96vw, calc(100svh - 200px), 760px); top: -60px; }
 
-#snap{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:12px;height:64px;padding:0 30px 0 22px;
-  border:0;border-radius:99px;background:#000;color:#fff;font:800 19px/1 Unbounded,'Arial Black',sans-serif;cursor:pointer;white-space:nowrap}
-#snap img{height:44px;width:auto;filter:invert(1)}
-.bang{font-size:1.2em;-webkit-text-stroke:1.5px currentColor}
-#snap:disabled{opacity:.3}
-#msg{position:fixed;left:0;right:0;bottom:100px;z-index:3;margin:0;text-align:center;font-size:14px}
-#msg:empty{display:none}
+#dots { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+.dot { position: absolute; border: 0; padding: 0; border-radius: 50%; background: #e6e6e6 center / cover; cursor: pointer; pointer-events: auto; }
 
-dialog{border:0;padding:16px;background:#fff;max-width:100vw;max-height:100vh}
-dialog::backdrop{background:#fff}
-.head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
-.x{flex:none;width:48px;height:48px;border-radius:50%;border:0;background:#000;color:#fff;font-size:22px;cursor:pointer}
-.time{font:800 20px Unbounded,'Arial Black',sans-serif}
-#vImg{display:block;max-width:100%;max-height:calc(100vh - 140px);margin:0 auto}
-#vNote{margin:12px 0 0;font-size:17px}
-#preview{position:fixed;top:16px;right:16px;z-index:3;width:min(300px,34vw);aspect-ratio:4/3;background:#111;overflow:hidden}
-#preview video{display:block;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
-#pImg{display:block;max-width:100%;max-height:55vh;margin:0 auto}
-.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.row input{flex:1 1 200px;height:52px;padding:0 20px;border:2px solid #000;border-radius:99px;font-size:16px}
-.pill{height:52px;padding:0 26px;border:0;border-radius:99px;background:#000;color:#fff;font-weight:700;cursor:pointer}
-.pill:disabled{opacity:.4}
+#cam { position: fixed; top: 16px; right: 16px; z-index: 3; width: min(300px, 34vw); aspect-ratio: 4 / 3; background: #111; object-fit: cover; transform: scaleX(-1); }
+
+#snap { position: fixed; left: 50%; bottom: 24px; z-index: 3; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; height: 64px; padding: 0 30px 0 22px; border: 0; border-radius: 99px; background: #000; color: #fff; font-size: 19px; font-weight: 700; cursor: pointer; }
+#snap img { height: 44px; filter: invert(1); }
+#snap:active, #snap.on { background: #ff2bd6; }
+
+dialog { border: 0; padding: 16px; max-width: 100vw; max-height: 100vh; }
+dialog::backdrop { background: #fff; }
+dialog img { display: block; max-width: 100%; max-height: calc(100vh - 160px); margin: 0 auto; }
+.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.x { width: 48px; height: 48px; border: 0; border-radius: 50%; background: #000; color: #fff; font-size: 22px; cursor: pointer; }
+#time { font-size: 32px; font-weight: 700; }
+#note { margin: 12px 0 0; font-size: 17px; }
+.row { display: flex; gap: 8px; margin-top: 16px; }
+#memo { flex: 1; min-width: 0; height: 52px; padding: 0 20px; border: 2px solid #000; border-radius: 99px; }
+#post { height: 52px; padding: 0 26px; border: 0; border-radius: 99px; background: #000; color: #fff; font-weight: 700; cursor: pointer; }
 </style>
 </head>
 <body>
 <h1>TIMESHOT</h1>
 
-<div class="clock">
-  <svg id="clock" viewBox="-410 -410 820 820" aria-label="Clock">
-    <rect x="-200" y="-200" width="400" height="400" fill="var(--pink)"/>
-    <circle r="190" fill="#fff"/>
-    <rect id="mm" x="-6" y="-200" width="12" height="250"/>
-    <rect id="hh" x="-13" y="-120" width="26" height="165" fill="var(--green)"/>
-    <rect id="ss" x="-1.5" y="-400" width="3" height="760"/>
-    <rect x="-24" y="-24" width="48" height="48"/>
-  </svg>
-</div>
+<svg id="clock" viewBox="-410 -410 820 820">
+  <circle r="190" fill="#f2f2f2"/>
+  <rect id="mm" x="-6" y="-200" width="12" height="250"/>
+  <rect id="hh" x="-13" y="-120" width="26" height="165" fill="#00e04f"/>
+  <rect id="ss" x="-1.5" y="-400" width="3" height="760"/>
+  <rect x="-24" y="-24" width="48" height="48"/>
+</svg>
 
-<div id="layer"></div>
-<p id="msg" aria-live="polite"></p>
-<button id="snap" type="button"><img src="data:image/png;base64,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" alt="">SNAP <span class="bang">!</span></button>
-<div id="preview"><video id="vid" playsinline muted autoplay></video></div>
+<div id="dots"></div>
+<video id="cam" playsinline muted autoplay></video>
+<button id="snap"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGcAAACgCAYAAAARrHL1AAAOf0lEQVR42u2de5AU1RXGf7vLY3mILKKIaGBRUYNEUUw0ookiKsRoAEWjKMZXSHwHJTGYWLFiqYkxanxUIFZi1FKjEDUqogUIBBHfERR8oQKr8lLYhcWF3Z38cc9Utb09M90953b3zPZXdWthpqf79j19b597znfOqaB8UAEcDBwNjAQGArsANUALsAlYBbwCzAbmA/WksIpOwMnALGArkPHRWoEVwG+BfukQ2sGhwDyfAsnVVgMXA1XpcOrhSmBzkYJxtgeAnumwFodK4EZFoTjbf4HadIjD42ZLgsm2l4Fe6TAHx9nyMs9Ybo8AHdPh9o9vAhsiEEy2XZ0OuX88HKFgMsAXwD7psBfGEUBTxMLJAHekQ18Y/4hBMBlgLdAnHf7c6A2si0k4GeCcuG68QwkIZyDwMfBJnmOqRP39htjYNDES+Gc6R8hp0PRzTA3G6PkQxtCpNXOWiv0uhRJ+AjQqCWc9sEc6pLq4REk4TcCgdDh1UQUsUBBOMzA4VQgMhgAjgM4yOPgwhNYDT2GcaVm0yIv8KNfx60TBWC3HVAN7A/2B7h7n/wrYlj7rsL+s8WFf3L08/D0ZYAfwH2Ac0NdDyegM7ItxQ7zmOu/nwO6paOC8IpegI13n2w94CRgVoA/VwOWOh2SZfNbucVGRwvme63xdgJ1C9uUgYKWo5ukm1OMdcwswN4cLuQWYCJye5/f53hUdZf+yDeOGcON/GG5C31Q43ngZQ9zIhW8TjgwyTjSwzqJMLJEZssh1/DJpqXB8zKSg3ztxAHAXcIzHd8NkSb0X+GVSKFNJF86FHu8RJw4PIJhngAEFlrlJwJ6yVDamKoBdhSCrfS0MeJ6/pKJoizOKFM6hHuc8PcR5WlyKRgoMffYFMZm0UNi6nD2mCcM76+xxzhkhBf05qU0NL/P/INGmholJxmvwFmNIH4MxPh8vdMHQbsPOxDlxugs6xDT4Q/LsH1pl5mRkcKvyqMV95LgKMb/UuVTfjkC3Ivp6LDAN2IjhVH8l+5/ZwDuUocv533KTNlzKMz1sZsssXKcBuFuW4bLBHSEHY4MsT68D72PCOXItdZWuaz5gkV+wOE4LAsqhGstpG4qRz48yQ3bze8osqJSlrhZDvJhLW66ZO6RjlGWW6BMlwsXIi24YH4rTxH8EcBKGguS84eXACT7fmRNEs8r+9izaOt0et8zQGVsOwnFqXtc4vnvU8fkiYK+A5x4KfCC/n+extA0E1lgUzsJSnz1u4SzCeCCHYWhPGeBDjEfSjcEYX89kmRleZpjvYuJ1WoBTPb4fg3G62RBOC4ZCVTbCyYiBcZvj/eMe1D4Ytqc7nHAjcBPQ1XX8tfL9+zmYmn+yOHuetMCZi1U4GddM6uCyFrxI4VANp1Wgl2MWPuQxWN3kOjaE0wQcVq7CucJ1/G0+B+Vnrt9Nc3x3cY4l0lYoyX3lKJwd8u7JYnf8Ez3ecJlYznR8tznH0zzRknrdgOEtJBqDMT4Uv8L50qUIjAgwIFtEscjiaNfAv453IO50S7PnVhSDXzWxK3A9JvD18AC/2wFsd/y/a8DNrZMd0+jykA7FxJG6MUXsZNqYkLTcBl2Anzr2GhnppN+Zs9W1HBziMH4GjaE5Ee+kEGfjzUGotzB7rk2KYE7CECTcHZwQUCEY5fJevuFzIB6lbX6CXIT0Az36f5kF4XyEiXqIDYcVMIsEFc6druPH+nC21dPW+/l8nuMfx5tT/S8LApoUh1BqgXt8hFh4CWct+T2P7rV6ch73wkbgNNfx3ynQr0U57ml34D1l4bwly30kqBF72FqfnZtIW9/KfaIsvCWmmjqxJGffL3/zcK59X5aujzEk9PdF0xpCW/bMswX6tID8jrVtygIaH4WpfyLG8+d3vb23gL5fJRpZb0yo4MFi+7qNtlEBWeyMCWLK5dm8wUffFhS419+UkkH0eJ8xLiswdKITFJL7dApx/I0+N5ULfJxrVtINogdhkjK05HkRvwhcJ4pBVQwxoZWyFM0J+CQXwgBl90Jog2iFx4txCnABudn5jcBz8hTWyTq9Xf5uldYonznbjoD02Wz/jpf9yAqxBtTIkpn9PMhGeibGs+p+V+1wffYjec9pLEnbgeGYDImhhTMCwyUuxjaU5Zs1OyLC3G2L2KAa5N+b5D31CvCuxzm7YiLUxikM1HiPfdGNon2ucn3+R+Aqpdl/H3Bu2B8fpZxYLkyrl6V0f4/+7YZh0TSKQIO0elGTL/dYKWrEQv2YxwzsJpql1r3tF1ZFfidmwTjbp3hHAvQWA+fAgK02zxJ9geO6l+CdqWo9MRpEf5EgwWTbZxiSoE30k72T8+n2ivc5R8m9sC6MQXRxAoWTkSUOi+TGeTl8Q142sWlK9/TroB3dnFDhbMUOkXxEAaPqtBxL/5vopGrpEkRba0pwbpeJrqRA1WK28as+Z3nUPUXRGC17ow4Br5s19M4pIgA4q80ODRLKWJfQmePmtiEKwbYIrrse76wdGilbjieAJ3QJyUWzR38rIiLc/9XDjnc3hvGjeU8F7WfNCZ05p9A2BrQ1wuvfksO98C7hCSC1QXkE0xMomM9l8+nE+RH3oVlMOVruhblh7JA9gacTJpzrPfr5YAz9WJPjaZ8a4lwnUwSv7PqY82lm23wPrahfxHmlne1ZD422k7x//J7jLkLkJMNBT5onF1wqxsg1YhBci+GWNcpxzQ41VZteNUt25Rtdn//KZ1iIDewj973Ald5lNiZ26KAC6vydYkRt0c6fmT2ukyNfTFd5srs7/u4sy2ON/O0p3/WQtpO0aozLurPjadyCicmZDtzv4rAhe4N5co240AT8EEMgcY/NaRhCx1DpY5YouUQ0vKdtJTdFibzYQYTbVYTZzUEe3CB2rtYcRMVZeOcYiBqrRbtdkeP7/qLNtYoBt44yRj+P0MK421KxVrdr9MBkjUri/msVOs6/ksUesm5nEtxmAse1x5JifRUdXTabO8qBpEYZ0I7TJKfCSSAyWFRxU5DcyoEpUuGkSIWTCidFKpxUOClS4aRIhZMKJ0UqnFQ4yUWLTbtVKpzi0AfvDOupcIg3j85lmKodPdLFLTkYjXcenSS3Bsq85sEQDF+upcQEY1U4cafb3RWT5ennxMtJS+F6KM7F5LHJlHgrq2XtaIJl3UiFEwH2xtBtm8pIMCX/zumBSS98ZY5E3CliwjhMktNMGbeSW9YOwX7ljXRZIziFdjKmpGT3hDwor2IyglS6So8dSdsq8ITkrSXaBliNiU/5KEFP9AeYGNLqHA+RVgTfRoKXlIkMwwheJNVm24xJ07Vbnj5PUbzeJ0m1AZ6DSaCaFME85pGYFY/8bW+jG7+auNIsJydoz/JqgEjlMcrX/g0JjDj7NAFCqcOkJOseIMzyGcXru6uXJAI3xSyUbZhA2AEETyyrmTvnDRLmEOzhqO4UR3sOU58tDG5T7ssVSZs1RxBPrpwVmEoeVUW4JzSX4rVYLuAaZhP6rYhjIL/EJBS/wyNxRBCcqjyYj8rmNlG4meiSAj2ITlh5J0xqZK2+fSUmqsThkQgEsxjdVCrHKacCm5XEvU0F8BJ24/svzmFyKQYP0w7KHffg6+l+NZOt3o5J8oOFpEKapb/eDlhTjii9mQ3KgnkK73zOWvidcn+vTqqR80jFm1yGqS1QYXmmf6jY5w2WZrcKzlI0e0SRBepM5VkzjQTTcWuVrvsFJtEelrNqXKh4vu2YsmVlL5wNsrnEsp9puOL5For1u+yFs9ojG6E2zld2w0/LkawvEcLpomj++AT7Lo0xiud7D+NqIKnCqSG/6zcIPrJ8X6djsqqjWDlqCwnGUPSiAMZbju95S1FD+4KvV5xP5MzprxRs1epRHw3lEixDFM/3RATLsIpwNNCASYVvCxcqF7qYTgmEHQ5Ezz+z3tL9HIhu0dT5xFglJQ7hrMFkdreB8crFul8ImkU9DuF0DFMMLgdWYYe+2gE4UfmcV2EMnYnOfrsLev73G7AXGm+rEMUMxYdTfebsmqMKYBh8aOleeqLvpMtiLKaWwsgkCmcvxRu3pUZvt2xe2RdTBHxqAgKdv4bz0CMDHmCpj92BlRGRTx6PYmNaGcADqoFNGL6XDWzB1D6IAqfIMjcqCTPnIaUn7jXR/GzhpIiJjk3AdcRYZ7USvfibJ7Gf3+D5GNioz6DnTgm8lmtFrN0eQX/3jykC4mOKKJgXFgPQoxZdHlGfh1uicBVq22UfV02ExPUWS0VZbWJQjsrtUUVCRBL+Ph497nPU/OKuGG53c0z1Ra0zQ69Bz2nVl3gwVgYrE0OF3j/YZIhOU+roOzHTWPeV5SaOZW6eKCrqmK3UwbkkI1/CDfLijlpAnwJnaN5MJ3niNTp3L8mKBI9Dm2sF/qyV3USzqN1UkoVa5cjqIG0hCjyHgxWXgAkkD53F/BJHPoV1xY7JDxQ7MxwSnZV3ZUzL3J2ETM9yKXq1NAeSbPTH0KDiWOYWyyoVCLcq2p12LpHEsFPRTSQRJPYnkDY3U+nCS0hggGsejMTwozMxuCAu8OsqeE3poo9ASVaUnxGDgLaKPTMvemFCNTQueDOUbFnjKTJgUQpofiEH3iAM+U/jYpMobRwDLI/YJje6ssC07lIiIR+2MQ84NsLluQoYU1mADoUSZamO0sdnwI8x+d2iiNUZVlnAPY0ScX0d5YGM2MZGY0L1baKmMoJS8usxvpxywkJMHNCDFq/Rkk84K5UuslxecOWGdZj8b5diOBbaWJVPOMuUnvhFlC8yYhs7EVMWQBNzCh1wv4JregDtA72Bvyup0puA/fCRlbChHW4+i8EkUYKKEc5Nfi82mfCW1vZarfAwTLaPsHbIQOE2vydYpr8lxBQeniDUEJwc8zohab1n+DBh1GMSpfYmBY6EFct8jNs9xY5bL1Edn5Mdc6O8k97E8KAPTWWRc9wuwpDs6zCugXpgqWh7nuP2fzNBr1LpbU6TAAAAAElFTkSuQmCC" alt="">SNAP !</button>
 <input type="file" id="file" accept="image/*" hidden>
 
-<!-- after the shot: add a note and post -->
 <dialog id="poster">
-  <div class="head"><span></span><button class="x" data-close type="button" aria-label="Close">×</button></div>
-  <img id="pImg" alt="">
-  <div class="row">
-    <input id="memo" maxlength="80" placeholder="Note" autocomplete="off">
-    <button class="pill" id="post" type="button">Post</button>
-  </div>
+  <div class="top"><span></span><button class="x">×</button></div>
+  <img id="shot" alt="">
+  <div class="row"><input id="memo" maxlength="80" placeholder="Note" autocomplete="off"><button id="post">Post</button></div>
 </dialog>
 
-<!-- tap a circle: the photo at its own size -->
 <dialog id="viewer">
-  <div class="head"><span class="time" id="vTime"></span><button class="x" data-close type="button" aria-label="Close">×</button></div>
-  <img id="vImg" alt="">
-  <p id="vNote"></p>
+  <div class="top"><span id="time"></span><button class="x">×</button></div>
+  <img id="big" alt="">
+  <p id="note"></p>
 </dialog>
 
 <script>
-/* ===== Shared storage for GitHub Pages: paste your Supabase project values here (see README) ===== */
-const SB_URL = 'https://bcufecjgawlivtkjsqbn.supabase.co';   // e.g. https://abcd1234.supabase.co
-const SB_KEY = 'sb_publishable_2uikYVj8L1mBdyChWs_RQQ_lVtU4XJu';   // the "anon public" key
-/* ================================================================================================ */
+// supabase
+const URL_ = 'https://bcufecjgawlivtkjsqbn.supabase.co/rest/v1/shots';
+const KEY = 'sb_publishable_2uikYVj8L1mBdyChWs_RQQ_lVtU4XJu';
+const H = { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' };
 
 const $ = id => document.getElementById(id);
-const NEON = ['#ff2bd6', '#39ff14', '#ff5e00', '#00e5ff', '#f2ff00', '#7a2bff', '#ff1744', '#0047ff'];
 const pad = n => String(n).padStart(2, '0');
-const dayOf = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
-const hash = s => { let h = 2166136261; for (const c of String(s)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; };
-const color = id => NEON[(hash(id + "#c") >>> 11) % NEON.length];
-const msg = t => { $('msg').textContent = t; };
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
 
-let shots = new Map(), store = null, me = null;
+let me = localStorage.getItem('timeshot-me');
+if (!me) { me = Math.random().toString(36).slice(2, 10); localStorage.setItem('timeshot-me', me); }
 
-/* ---------- three small stores: Claude link, Supabase, or this browser ---------- */
-function localStore() {
-  const K = 'timeshot-v2', read = () => { try { return JSON.parse(localStorage.getItem(K)) || []; } catch (e) { return []; } };
-  return {
-    watch(day, cb) { cb(read().filter(s => s.day === day)); },
-    async add(s, img) { const all = read().filter(x => x.id !== s.id).filter(x => x.day === s.day); all.push({ ...s, img }); localStorage.setItem(K, JSON.stringify(all)); },
-    async full(id) { const s = read().find(x => x.id === id); return s && s.img; }
-  };
-}
-function supabaseStore() {
-  const H = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
-  const T = SB_URL + '/rest/v1/shots';
-  return {
-    watch(day, cb) {
-      let since = 0;
-      const pull = async () => {
-        try {
-          const r = await fetch(`${T}?select=id,uid,day,hour,at,memo,thumb&day=eq.${day}&at=gt.${since}&order=at`, { headers: H });
-          const rows = await r.json();
-          if (Array.isArray(rows) && rows.length) { since = rows[rows.length - 1].at; cb(rows, true); }
-          msg('');
-        } catch (e) { msg('Offline'); }
-      };
-      pull(); return setInterval(pull, 15000);              // check for new snaps every 15 s
-    },
-    async add(s, img) {
-      const r = await fetch(T, { method: 'POST', headers: { ...H, Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ ...s, img }) });
-      if (!r.ok) throw new Error('post');
-    },
-    async full(id) { const r = await fetch(`${T}?select=img&id=eq.${encodeURIComponent(id)}`, { headers: H }); const j = await r.json(); return j[0] && j[0].img; }
-  };
-}
-function claudeStore(db) {
-  return {
-    watch(day, cb) { return db.collection('shots').where('day', '==', day).onSnapshot(q => cb(q.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }))), () => msg('Offline')); },
-    async add(s, img) { await db.doc('full/' + s.id).set({ img }); await db.doc('shots/' + s.id).set(s); },
-    async full(id) { const d = await db.doc('full/' + id).get(); return d.exists ? d.data().img : null; }
-  };
-}
+let day = today(), shots = [], since = 0, picked = null;
 
-/* ---------- clock ---------- */
+
+// clock
 function tick() {
   const n = new Date(), h = n.getHours() % 12, m = n.getMinutes(), s = n.getSeconds();
   $('hh').setAttribute('transform', `rotate(${(h + m / 60) * 30})`);
   $('mm').setAttribute('transform', `rotate(${(m + s / 60) * 6})`);
   $('ss').setAttribute('transform', `rotate(${s * 6})`);
 }
+tick();
+setInterval(tick, 1000);
 
-/* ---------- circles: random but stable spots, kept apart, never moving ---------- */
-function rng(seed) { return () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t ^= t + Math.imul(t ^ (t >>> 7), 61 | t); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-function clearance(x, y, r, b) { const dx = Math.max(b[0] - x, 0, x - b[0] - b[2]), dy = Math.max(b[1] - y, 0, y - b[1] - b[3]); return Math.hypot(dx, dy) - r; }
-function render() {
-  const W = innerWidth, H = innerHeight, now = new Date(), hour = now.getHours(), today = dayOf(now);
-  const BIG = Math.round(Math.min(160, Math.max(96, Math.min(W, H) * .17))), SMALL = 36;
-  const c = $('clock').getBoundingClientRect(), sq = c.width * 400 / 820;
-  const keepOut = [[c.left + c.width / 2 - sq / 2, c.top + c.height / 2 - sq / 2, sq, sq], [0, 0, Math.min(W, 380), 90], [W / 2 - 140, H - 100, 280, 100]];
-  const pv = $('preview').getBoundingClientRect(); keepOut.push([pv.left, pv.top, pv.width, pv.height]);
-  const placed = [], layer = $('layer');
-  layer.textContent = '';
-  [...shots.values()].sort((a, b) => a.at - b.at).forEach(s => {
-    const big = s.day === today && s.hour === hour, d = big ? BIG : SMALL, r = d / 2, rand = rng(hash(s.id));
-    let best = [0, 0], score = -1e9;
-    for (let t = 0; t < 80 && score < 14; t++) {
-      const x = r + rand() * (W - d), y = r + rand() * (H - d);
-      let sc = Infinity;
-      for (const p of placed) sc = Math.min(sc, Math.hypot(p[0] - x, p[1] - y) - p[2] - r);
-      for (const b of keepOut) sc = Math.min(sc, clearance(x, y, r, b));
-      if (sc > score) { score = sc; best = [x, y]; }
-    }
-    placed.push([best[0], best[1], r]);
-    const b = document.createElement('button');
-    b.className = 'orb' + (big ? ' big' : '');
-    b.style.cssText = `--d:${d}px;--c:${color(s.id)};left:${best[0] - r}px;top:${best[1] - r}px`;
-    b.setAttribute('aria-label', 'Snap ' + s.hour + 'h');
-    if (big && /^data:image\//.test(s.thumb)) { const im = new Image(); im.src = s.thumb; im.alt = ''; b.append(im); }
-    b.onclick = () => openViewer(s);
-    layer.append(b);
-  });
+
+// photos: honeycomb around the clock, from 12 o'clock outward, smaller near the edges
+function hits(x, y, r, b) {
+  return x + r > b[0] && x - r < b[0] + b[2] && y + r > b[1] && y - r < b[1] + b[3];
 }
-let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(render, 150); });
 
-/* ---------- snap: pick a photo (phones offer the camera here) ---------- */
-let picked = null;
-function shrink(src, w, h, max, square, q, mirror) {
+function spots(d) {
+  const W = innerWidth, H = innerHeight, c = $('clock').getBoundingClientRect();
+  const cx = c.left + c.width / 2, cy = c.top + c.height / 2, R = c.width * 190 / 820;
+  const gap = d * .12, step = d + gap, rowH = step * .866, n = Math.ceil(Math.max(W, H) / rowH);
+  const v = $('cam').getBoundingClientRect();
+  const avoid = [[0, 0, 300, 80], [W / 2 - 140, H - 100, 280, 100], [v.left - 8, v.top, v.width + 8, v.height + 8]];
+  const out = [];
+  for (let j = -n; j <= n; j++) {
+    for (let i = -n; i <= n; i++) {
+      const x = cx + (i + (j & 1) / 2) * step, y = cy + j * rowH, dist = Math.hypot(x - cx, y - cy);
+      const size = d * Math.min(1, Math.min(x, y, W - x, H - y) / d);
+      if (dist < R + gap + d / 2 || size < d * .4 || avoid.some(b => hits(x, y, size / 2, b))) continue;
+      out.push({ x, y, size, ring: Math.round(dist / step), ang: (Math.atan2(x - cx, cy - y) + 2 * Math.PI) % (2 * Math.PI) });
+    }
+  }
+  return out.sort((a, b) => a.ring - b.ring || a.ang - b.ang);
+}
+
+function render() {
+  let d = Math.round(Math.min(110, Math.max(64, Math.min(innerWidth, innerHeight) * .14)));
+  let pts = spots(d);
+  while (pts.length < shots.length && d > 24) pts = spots(d = Math.round(d * .88));
+
+  $('dots').replaceChildren(...shots.slice(0, pts.length).map((s, k) => {
+    const p = pts[k], b = document.createElement('button');
+    b.className = 'dot';
+    b.style.cssText = `width:${p.size}px;height:${p.size}px;left:${p.x - p.size / 2}px;top:${p.y - p.size / 2}px`;
+    if (/^data:image\/jpeg;base64,[\w+/=]+$/.test(s.thumb)) b.style.backgroundImage = `url("${s.thumb}")`;
+    b.onclick = () => show(s);
+    return b;
+  }));
+}
+let wait;
+addEventListener('resize', () => { clearTimeout(wait); wait = setTimeout(render, 150); });
+
+
+// load today's photos, then check for new ones every 15 s
+async function pull() {
+  if (today() !== day) { day = today(); shots = []; since = 0; render(); }
+  try {
+    const r = await fetch(`${URL_}?select=id,at,memo,thumb&day=eq.${day}&at=gt.${since}&order=at`, { headers: H });
+    const rows = await r.json();
+    if (!rows.length) return;
+    since = rows[rows.length - 1].at;
+    const ids = new Set(rows.map(r => r.id));
+    shots = shots.filter(s => !ids.has(s.id)).concat(rows);
+    render();
+  } catch (e) {}
+}
+pull();
+setInterval(pull, 15000);
+
+
+// camera
+const cam = $('cam');
+navigator.mediaDevices?.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1920 } }, audio: false })
+  .then(s => { cam.srcObject = s; })
+  .catch(() => { cam.hidden = true; render(); });
+
+function jpg(src, w, h, max, square, q, flip) {
   const c = document.createElement('canvas'), x = c.getContext('2d');
   let sx = 0, sy = 0, sw = w, sh = h;
   if (square) { const m = Math.min(w, h); sx = (w - m) / 2; sy = (h - m) / 2; sw = sh = m; c.width = c.height = max; }
-  else { const k = Math.min(1, max / Math.max(w, h)); c.width = Math.round(w * k); c.height = Math.round(h * k); }
-  if (mirror) { x.translate(c.width, 0); x.scale(-1, 1); }
+  else { const k = Math.min(1, max / Math.max(w, h)); c.width = w * k; c.height = h * k; }
+  if (flip) { x.translate(c.width, 0); x.scale(-1, 1); }
   x.drawImage(src, sx, sy, sw, sh, 0, 0, c.width, c.height);
   return c.toDataURL('image/jpeg', q);
 }
-function take(src, w, h, mirror) {
-  let img = shrink(src, w, h, 1600, false, .82, mirror);
-  for (let m = 1400; img.length > 200000 && m >= 800; m -= 200) img = shrink(src, w, h, m, false, .75, mirror);
-  picked = { img, thumb: shrink(src, w, h, 320, true, .72, mirror) };
-  $('pImg').src = img; $('memo').value = ''; $('post').disabled = false; $('poster').showModal();
+
+function take(src, w, h, flip) {
+  let img = jpg(src, w, h, 1600, false, .82, flip);
+  for (let m = 1400; img.length > 300000 && m >= 800; m -= 200) img = jpg(src, w, h, m, false, .75, flip);
+  picked = { img, thumb: jpg(src, w, h, 240, true, .7, flip) };
+  $('shot').src = picked.img;
+  $('memo').value = '';
+  $('post').disabled = false;
+  $('post').textContent = 'Post';
+  $('poster').showModal();
 }
-let stream = null;
-const vid = $('vid');
-async function camOn() {                                  // live view in the corner, as soon as the page opens
-  if (stream) return true;
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
-  for (const v of [{ facingMode: 'user', width: { ideal: 1920 } }, true]) {
-    try { stream = await navigator.mediaDevices.getUserMedia({ video: v, audio: false }); break; }
-    catch (e) { if (e.name === 'NotAllowedError') return false; }
-  }
-  if (!stream) return false;
-  vid.srcObject = stream; await vid.play().catch(() => {});
-  return true;
-}
-$('snap').onclick = async () => {
-  if (stream && vid.videoWidth) return take(vid, vid.videoWidth, vid.videoHeight, true);   // snap straight from the live view
-  if (await camOn() && vid.videoWidth) return take(vid, vid.videoWidth, vid.videoHeight, true);
-  $('file').click();                                     // no camera: pick a photo instead
+
+$('snap').onclick = () => {
+  $('snap').classList.add('on');
+  setTimeout(() => $('poster').open || $('snap').classList.remove('on'), 300);
+  if (cam.videoWidth) take(cam, cam.videoWidth, cam.videoHeight, true);
+  else $('file').click();
 };
-camOn();
+$('poster').onclose = () => $('snap').classList.remove('on');
+
 $('file').onchange = e => {
-  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  const f = e.target.files[0];
+  e.target.value = '';
+  if (!f) return;
   const im = new Image();
-  im.onload = () => { take(im, im.naturalWidth, im.naturalHeight); URL.revokeObjectURL(im.src); };
+  im.onload = () => take(im, im.naturalWidth, im.naturalHeight, false);
   im.src = URL.createObjectURL(f);
 };
+
+
+// post
 $('post').onclick = async () => {
-  if (!picked) return;
-  const n = new Date(), day = dayOf(n), hour = n.getHours();
-  const s = { id: day + '_' + pad(hour) + '_' + String(me).replace(/[^\w-]/g, '_').slice(0, 60), uid: me, day, hour, at: n.getTime(), memo: $('memo').value.trim().slice(0, 80), thumb: picked.thumb };
+  const n = new Date();
+  const s = { id: day + '_' + pad(n.getHours()) + '_' + me, uid: me, day, hour: n.getHours(), at: n.getTime(), memo: $('memo').value.trim(), thumb: picked.thumb };
   $('post').disabled = true;
-  try { await store.add(s, picked.img); shots.set(s.id, s); render(); $('poster').close(); picked = null; }
-  catch (e) { $('post').disabled = false; msg('Could not post'); }
+  const r = await fetch(URL_, { method: 'POST', headers: { ...H, Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ ...s, img: picked.img }) }).catch(() => null);
+  if (!r || !r.ok) { $('post').disabled = false; $('post').textContent = 'Try again'; return; }
+  shots = shots.filter(x => x.id !== s.id).concat(s);
+  render();
+  $('poster').close();
 };
 $('memo').onkeydown = e => { if (e.key === 'Enter') $('post').click(); };
 
-/* ---------- viewer ---------- */
-async function openViewer(s) {
+
+// tap a photo: time + full photo
+async function show(s) {
   const t = new Date(s.at);
-  $('vTime').textContent = pad(t.getHours()) + ':' + pad(t.getMinutes());
-  $('vNote').textContent = s.memo || '';
-  $('vImg').src = s.thumb || ''; $('viewer').showModal();
-  try { const img = await store.full(s.id); if (img && /^data:image\//.test(img)) $('vImg').src = img; } catch (e) {}
+  $('time').textContent = pad(t.getHours()) + ':' + pad(t.getMinutes());
+  $('note').textContent = s.memo || '';
+  $('big').src = s.thumb || '';
+  $('viewer').showModal();
+  const r = await fetch(`${URL_}?select=img&id=eq.${encodeURIComponent(s.id)}`, { headers: H }).then(r => r.json()).catch(() => []);
+  if (r[0]?.img?.startsWith('data:image/')) $('big').src = r[0].img;
 }
-document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => b.closest('dialog').close());
 
-/* ---------- start ---------- */
-let day = dayOf(new Date()), hourNow = new Date().getHours(), stop = null;
-function watch() {
-  shots = new Map(); render();
-  if (typeof stop === 'function') stop(); else clearInterval(stop);
-  stop = store.watch(day, (rows, add) => {
-    if (!add) shots = new Map();
-    rows.forEach(r => { if (r && typeof r.hour === 'number') shots.set(r.id, r); });
-    render();
-  });
-}
-setInterval(() => {
-  tick();
-  const n = new Date();
-  if (dayOf(n) !== day) { day = dayOf(n); hourNow = n.getHours(); watch(); }
-  else if (n.getHours() !== hourNow) { hourNow = n.getHours(); render(); }   // past hour: big photo becomes a small dot
-}, 1000);
-tick();
-
-(async () => {
-  let db = null, user = null;
-  if (window.claude && window.claude.use) [db, user] = await Promise.all([window.claude.use('db').catch(() => null), window.claude.use('user').catch(() => null)]);
-  if (user) { try { me = await user.id(); } catch (e) {} try { if (await user.can('data.write') === false) $('snap').disabled = true; } catch (e) {} }
-  if (!me) { try { me = localStorage.getItem('timeshot-me') || Math.random().toString(36).slice(2, 10); localStorage.setItem('timeshot-me', me); } catch (e) { me = Math.random().toString(36).slice(2, 10); } }
-  store = db ? claudeStore(db) : SB_URL ? supabaseStore() : localStore();
-  watch();
-})();
+document.querySelectorAll('.x').forEach(b => b.onclick = () => b.closest('dialog').close());
 </script>
 </body>
 </html>
