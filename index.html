@@ -40,6 +40,9 @@ dialog::backdrop{background:#fff}
 .time{font:800 20px Unbounded,'Arial Black',sans-serif}
 #vImg{display:block;max-width:100%;max-height:calc(100vh - 140px);margin:0 auto}
 #vNote{margin:12px 0 0;font-size:17px}
+#vid{display:block;width:100%;max-height:calc(100vh - 170px);object-fit:contain;background:#000;transform:scaleX(-1)}
+.shutter{display:block;width:76px;height:76px;margin:16px auto 0;border-radius:50%;border:6px solid #fff;outline:3px solid #000;background:#000;cursor:pointer}
+.shutter:disabled{opacity:.3}
 #pImg{display:block;max-width:100%;max-height:55vh;margin:0 auto}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .row input{flex:1 1 200px;height:52px;padding:0 20px;border:2px solid #000;border-radius:99px;font-size:16px}
@@ -66,6 +69,13 @@ dialog::backdrop{background:#fff}
 <button id="snap" type="button"><img src="data:image/png;base64,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" alt="">SNAP <span class="bang">!</span></button>
 <input type="file" id="file" accept="image/*" hidden>
 
+<!-- camera: live view and shutter -->
+<dialog id="cam">
+  <div class="head"><span></span><button class="x" data-close type="button" aria-label="Close">×</button></div>
+  <video id="vid" playsinline muted autoplay></video>
+  <button class="shutter" id="shutter" type="button" aria-label="Take photo" disabled></button>
+</dialog>
+
 <!-- after the shot: add a note and post -->
 <dialog id="poster">
   <div class="head"><span></span><button class="x" data-close type="button" aria-label="Close">×</button></div>
@@ -85,8 +95,8 @@ dialog::backdrop{background:#fff}
 
 <script>
 /* ===== Shared storage for GitHub Pages: paste your Supabase project values here (see README) ===== */
-const SB_URL = '';   // e.g. https://abcd1234.supabase.co
-const SB_KEY = '';   // the "anon public" key
+const SB_URL = 'https://bcufecjgawlivtkjsqbn.supabase.co';   // e.g. https://abcd1234.supabase.co
+const SB_KEY = 'sb_publishable_2uikYVj8L1mBdyChWs_RQQ_lVtU4XJu';   // the "anon public" key
 /* ================================================================================================ */
 
 const $ = id => document.getElementById(id);
@@ -181,21 +191,40 @@ let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(ren
 
 /* ---------- snap: pick a photo (phones offer the camera here) ---------- */
 let picked = null;
-function shrink(src, w, h, max, square, q) {
+function shrink(src, w, h, max, square, q, mirror) {
   const c = document.createElement('canvas'), x = c.getContext('2d');
   let sx = 0, sy = 0, sw = w, sh = h;
   if (square) { const m = Math.min(w, h); sx = (w - m) / 2; sy = (h - m) / 2; sw = sh = m; c.width = c.height = max; }
   else { const k = Math.min(1, max / Math.max(w, h)); c.width = Math.round(w * k); c.height = Math.round(h * k); }
+  if (mirror) { x.translate(c.width, 0); x.scale(-1, 1); }
   x.drawImage(src, sx, sy, sw, sh, 0, 0, c.width, c.height);
   return c.toDataURL('image/jpeg', q);
 }
-function take(src, w, h) {
-  let img = shrink(src, w, h, 1600, false, .82);
-  for (let m = 1400; img.length > 200000 && m >= 800; m -= 200) img = shrink(src, w, h, m, false, .75);
-  picked = { img, thumb: shrink(src, w, h, 320, true, .72) };
+function take(src, w, h, mirror) {
+  let img = shrink(src, w, h, 1600, false, .82, mirror);
+  for (let m = 1400; img.length > 200000 && m >= 800; m -= 200) img = shrink(src, w, h, m, false, .75, mirror);
+  picked = { img, thumb: shrink(src, w, h, 320, true, .72, mirror) };
   $('pImg').src = img; $('memo').value = ''; $('post').disabled = false; $('poster').showModal();
 }
-$('snap').onclick = () => $('file').click();
+let stream = null;
+const vid = $('vid');
+function camOff() { if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; vid.srcObject = null; $('shutter').disabled = true; }
+$('cam').addEventListener('close', camOff);
+$('snap').onclick = async () => {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return $('file').click();
+  $('cam').showModal();
+  for (const v of [{ facingMode: 'user', width: { ideal: 1920 } }, true]) {
+    try { stream = await navigator.mediaDevices.getUserMedia({ video: v, audio: false }); break; }
+    catch (e) { if (e.name === 'NotAllowedError') break; }
+  }
+  if (!stream || !$('cam').open) { camOff(); $('cam').close(); return $('file').click(); }   // no camera: pick a photo instead
+  vid.srcObject = stream; await vid.play().catch(() => {}); $('shutter').disabled = false;
+};
+$('shutter').onclick = () => {
+  if (!vid.videoWidth) return;
+  take(vid, vid.videoWidth, vid.videoHeight, true);   // poster opens over the camera
+  $('cam').close();
+};
 $('file').onchange = e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
   const im = new Image();
