@@ -14,6 +14,7 @@ create table if not exists public.shots (
 create index if not exists shots_day_at on public.shots (day, at);
 
 alter table public.shots enable row level security;
+grant select, insert, update on public.shots to anon;
 
 -- 누구나 보기 / 올리기 / 같은 시간에 다시 올리면 덮어쓰기
 drop policy if exists "read"   on public.shots;
